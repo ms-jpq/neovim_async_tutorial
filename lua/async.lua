@@ -11,12 +11,16 @@ local pong = function (func, callback)
   local thread = co.create(func)
   local step = nil
   step = function (...)
-    local stat, ret = co.resume(thread, ...)
-    assert(stat, ret)
+    local pack = {co.resume(thread, ...)}
+    local status = pack[1]
+    local ret = pack[2]
+    assert(status, ret)
     if co.status(thread) == "dead" then
-      (callback or function () end)(ret)
+        if (callback) then 
+            (function (_, ...) callback(...) end)(table.unpack(pack))
+        end
     else
-      assert(type(ret) == "function", "type error :: expected func")
+      assert(type(ret) == "function", "type error :: expected func - coroutine yielded some value")
       ret(step)
     end
   end
