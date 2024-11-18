@@ -3,7 +3,7 @@
 --#################### ############ ####################
 
 local co = coroutine
-
+local unpack = table.unpack or unpack
 
 -- use with wrap
 local pong = function (func, callback)
@@ -17,7 +17,7 @@ local pong = function (func, callback)
     assert(status, ret)
     if co.status(thread) == "dead" then
         if (callback) then 
-            (function (_, ...) callback(...) end)(table.unpack(pack))
+            (function (_, ...) callback(...) end)(unpack(pack))
         end
     else
       assert(type(ret) == "function", "type error :: expected func - coroutine yielded some value")
